@@ -53,6 +53,7 @@ readonly version_mi=v1.8.2
 readonly version_mi2=v2.1.2
 readonly version_mng=master  # ~unmaintained
 readonly version_nomesh=$version_mesh
+readonly version_zmemalloc=main
 readonly version_pa=main
 readonly version_rp=1.4.5
 readonly version_sc=master   # unmaintained since 2016
@@ -104,6 +105,7 @@ setup_tbb=0
 setup_tc=0
 setup_tcg=0
 setup_yal=0
+setup_zmemalloc=0
 
 # bigger benchmarks
 setup_bench=0
@@ -144,6 +146,7 @@ while : ; do
         setup_pa=$flag_arg
         setup_sn=$flag_arg
         setup_sg=$flag_arg
+		setup_zmemalloc=$flag_arg
         setup_tbb=$flag_arg
         setup_tc=$flag_arg
         setup_yal=$flag_arg
@@ -232,6 +235,8 @@ while : ; do
         setup_sm=$flag_arg;;
     sn)
         setup_sn=$flag_arg;;
+	zmemalloc)
+		setup_zmemalloc=$flag_arg;;
     tbb)
         setup_tbb=$flag_arg;;
     tc)
@@ -274,6 +279,7 @@ while : ; do
         echo "  sc                           setup scalloc ($version_sc)"
         echo "  scudo                        setup scudo ($version_scudo)"
         echo "  sg                           setup slimguard ($version_sg)"
+		echo "  zmemalloc                    setup zmemalloc ($version_zmemalloc)"
         echo "  sm                           setup supermalloc ($version_sm)"
         echo "  sn                           setup snmalloc ($version_sn)"
         echo "  tbb                          setup Intel TBB malloc ($version_tbb)"
@@ -472,6 +478,12 @@ if test "$setup_hm" = "1"; then
   make CONFIG_NATIVE=true CONFIG_WERROR=false VARIANT=light -j $proc
   make CONFIG_NATIVE=true CONFIG_WERROR=false VARIANT=default -j $proc
   popd
+fi
+
+if test "$setup_zmemalloc" = "1"; then 
+	checkout zmemalloc $version_zmemalloc https://github.com/BeetlyDB/zmemalloc
+	zig build -Doptimize=ReleaseFast
+	popd
 fi
 
 if test "$setup_gd" = "1"; then

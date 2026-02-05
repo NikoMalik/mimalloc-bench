@@ -6,7 +6,7 @@
 # Allocators and tests
 # --------------------------------------------------------------------
 
-readonly alloc_all="sys dh ff fg gd hd hm hml iso je lf lp lt mi mi-sec mi2 mi2-sec mng mesh nomesh pa rp sc scudo sg sm sn sn-sec tbb tc tcg mi-dbg mi2-dbg xmi xsmi xmi-dbg yal"
+readonly alloc_all="sys dh ff fg gd hd hm hml iso je lf lp lt mi mi-sec mi2 mi2-sec mng mesh nomesh pa rp zmemalloc sc scudo sg sm sn sn-sec tbb tc tcg mi-dbg mi2-dbg xmi xsmi xmi-dbg yal"
 readonly alloc_secure="dh ff gd hm hml iso mi-sec mi2-sec mng pa scudo sg sn-sec sg"
 alloc_run=""           # allocators to run (expanded by command line options)
 alloc_installed="sys"  # later expanded to include all installed allocators
@@ -113,6 +113,7 @@ alloc_lib_add "lt"     "$localdevdir/lt/gnu.make.lib/libltalloc$extso"
 alloc_lib_add "mesh"   "$localdevdir/mesh/build/lib/libmesh$extso"
 alloc_lib_add "mng"    "$localdevdir/mng/libmallocng$extso"
 alloc_lib_add "nomesh" "$localdevdir/nomesh/build/lib/libmesh$extso"
+alloc_lib_add "zmemalloc" "$localdevdir/zig-out/lib/libzmemalloc_dynamic$extso"
 alloc_lib_add "pa"     "$localdevdir/pa/partition_alloc_builder/out/Default/libpalib$extso"
 alloc_lib_add "rp"     "$lib_rp"
 alloc_lib_add "sc"     "$localdevdir/sc/out/Release/lib.target/libscalloc$extso"
@@ -404,6 +405,7 @@ while : ; do
             echo "  mi2                          use mimalloc2"
             echo "  mi2-sec                      use secure version of mimalloc2"
             echo "  mng                          use mallocng"
+			echo " zmemalloc                     use zmemalloc"
             echo "  nomesh                       use mesh with meshing disabled"
             echo "  pa                           use PartitionAlloc"
             echo "  rp                           use rpmalloc"
