@@ -50,6 +50,7 @@ readonly version_lp=main
 readonly version_lt=master   # ~unmaintained since 2019
 readonly version_mesh=master # ~unmaintained since 2021
 readonly version_mi=v1.8.2
+readonly version_s=v7.6.0
 readonly version_mi2=v2.1.2
 readonly version_mng=master  # ~unmaintained
 readonly version_nomesh=$version_mesh
@@ -63,7 +64,7 @@ readonly version_sm=master   # ~unmaintained since 2017
 readonly version_sn=0.7.3
 readonly version_tbb=v2021.9.0
 readonly version_tc=gperftools-2.18
-readonly version_tcg=98fd24303c7b5ef5e30da625f11fb623a5e038b6 # 2025-07-18
+readonly version_tcg=41f02ebf6b0cf2d3dfd863da73219eb9645ba547
 readonly version_yal=main
 
 # benchmark versions
@@ -101,6 +102,7 @@ setup_scudo=0
 setup_sg=0
 setup_sm=0
 setup_sn=0
+setup_s=0
 setup_tbb=0
 setup_tc=0
 setup_tcg=0
@@ -145,6 +147,7 @@ while : ; do
         setup_mi2=$flag_arg
         setup_pa=$flag_arg
         setup_sn=$flag_arg
+		setup_s=$flag_arg
         setup_sg=$flag_arg
 		setup_zmemalloc=$flag_arg
         setup_tbb=$flag_arg
@@ -235,6 +238,8 @@ while : ; do
         setup_sm=$flag_arg;;
     sn)
         setup_sn=$flag_arg;;
+	s)
+        setup_s=$flag_arg;;
 	zmemalloc)
 		setup_zmemalloc=$flag_arg;;
     tbb)
@@ -283,6 +288,7 @@ while : ; do
         echo "  sm                           setup supermalloc ($version_sm)"
         echo "  sn                           setup snmalloc ($version_sn)"
         echo "  tbb                          setup Intel TBB malloc ($version_tbb)"
+		echo "  s                            setup smalloc ($version_s)"
         echo "  tc                           setup tcmalloc ($version_tc)"
         echo "  tcg                          setup Google's tcmalloc ($version_tcg)"
         echo "  yal                          setup yalloc ($version_yal)"
@@ -486,6 +492,13 @@ if test "$setup_zmemalloc" = "1"; then
 	popd
 fi
 
+
+if test "$setup_s" = "1"; then
+  checkout s $version_s https://github.com/zooko/smalloc
+  cargo build --release --package smalloc-ffi
+  popd
+fi
+
 if test "$setup_gd" = "1"; then
   checkout gd $version_gd https://github.com/UTSASRG/Guarder
   make -j $procs
@@ -619,10 +632,16 @@ if test "$setup_tc" = "1"; then
 fi
 
 if test "$setup_tcg" = "1"; then
-  checkout tcg $version_tcg https://github.com/google/tcmalloc
-  bazel build -c opt tcmalloc
+  checkout tcg $version_tcg https://github.com/NikoMalik/tcmalloc.git
+
+  CC=clang CXX=clang++ \
+  bazel build -c opt //tcmalloc:tcmalloc_shared \
+    --repo_env=CC=clang \
+    --repo_env=CXX=clang++
+
   popd
 fi
+
 
 if test "$setup_hd" = "1"; then
   checkout hd $version_hd https://github.com/emeryberger/Hoard
